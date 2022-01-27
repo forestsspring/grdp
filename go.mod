@@ -1,4 +1,4 @@
-module grdp
+module github.com/forestsspring/grdp
 
 go 1.16
 
