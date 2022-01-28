@@ -10,17 +10,16 @@ import (
 	"sync"
 	"time"
 
-	"github.com/tomatome/grdp/plugin/cliprdr"
-	"github.com/tomatome/grdp/protocol/rfb"
+	"github.com/forestsspring/grdp/protocol/rfb"
 
-	"github.com/tomatome/grdp/core"
-	"github.com/tomatome/grdp/glog"
-	"github.com/tomatome/grdp/protocol/nla"
-	"github.com/tomatome/grdp/protocol/pdu"
-	"github.com/tomatome/grdp/protocol/sec"
-	"github.com/tomatome/grdp/protocol/t125"
-	"github.com/tomatome/grdp/protocol/tpkt"
-	"github.com/tomatome/grdp/protocol/x224"
+	"github.com/forestsspring/grdp/core"
+	"github.com/forestsspring/grdp/glog"
+	"github.com/forestsspring/grdp/protocol/nla"
+	"github.com/forestsspring/grdp/protocol/pdu"
+	"github.com/forestsspring/grdp/protocol/sec"
+	"github.com/forestsspring/grdp/protocol/t125"
+	"github.com/forestsspring/grdp/protocol/tpkt"
+	"github.com/forestsspring/grdp/protocol/x224"
 )
 
 type Client struct {
@@ -69,18 +68,14 @@ func (g *Client) Login(domain, user, pwd string) error {
 	g.sec.SetChannelSender(g.mcs)
 	//g.pdu.SetFastPathSender(g.tpkt)
 
-	//g.x224.SetRequestedProtocol(x224.PROTOCOL_SSL)
+	g.x224.SetRequestedProtocol(x224.PROTOCOL_SSL)
 	g.x224.SetRequestedProtocol(x224.PROTOCOL_RDP)
+	g.x224.SetRequestedProtocol(x224.PROTOCOL_HYBRID)
 
 	err = g.x224.Connect()
 	if err != nil {
 		return fmt.Errorf("[x224 connect err] %v", err)
 	}
-	c := &cliprdr.CliprdrClient{}
-	c.SetSender(g.sec)
-	g.sec.On(c.GetType(), func(s []byte) {
-		c.Handle(s)
-	})
 	glog.Info("wait connect ok")
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
@@ -92,15 +87,15 @@ func (g *Client) Login(domain, user, pwd string) error {
 	}).On("close", func() {
 		err = errors.New("close")
 		glog.Info("on close")
-		//wg.Done()
+		wg.Done()
 	}).On("success", func() {
 		err = nil
-		glog.Info("on success")
+		glog.Info("on success will close")
 		//wg.Done()
 	}).On("ready", func() {
 		glog.Info("on ready")
 	}).On("update", func(rectangles []pdu.BitmapData) {
-		glog.Info("on update bitmap:", len(rectangles))
+		glog.Info("on update bitmap,will close:", len(rectangles))
 	})
 
 	wg.Wait()
