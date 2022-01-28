@@ -11,8 +11,8 @@ import (
 	"time"
 
 	socketio "github.com/googollee/go-socket.io"
-	"github.com/tomatome/grdp/glog"
-	"github.com/tomatome/grdp/protocol/pdu"
+	"github.com/forestsspring/grdp/glog"
+	"github.com/forestsspring/grdp/protocol/pdu"
 )
 
 func showPreview(w http.ResponseWriter, r *http.Request) {

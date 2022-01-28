@@ -6,13 +6,23 @@ import (
 	"io"
 	"os"
 
-	"github.com/tomatome/grdp/plugin"
+	"github.com/forestsspring/grdp/glog"
 
-	"github.com/tomatome/grdp/glog"
-
+	"github.com/forestsspring/grdp/core"
+	"github.com/forestsspring/grdp/protocol/t125/per"
 	"github.com/lunixbochs/struc"
-	"github.com/tomatome/grdp/core"
-	"github.com/tomatome/grdp/protocol/t125/per"
+)
+
+//static channel name
+const (
+	CLIPRDR_SVC_CHANNEL_NAME = "cliprdr" //剪切板
+	RDPDR_SVC_CHANNEL_NAME   = "rdpdr"   //打印
+	RDPSND_SVC_CHANNEL_NAME  = "rdpsnd"  //音频输出
+	RAIL_SVC_CHANNEL_NAME    = "rail"    //远程应用
+	ENCOMSP_SVC_CHANNEL_NAME = "encomsp" //多方虚拟通道
+	REMDESK_SVC_CHANNEL_NAME = "remdesk" //远程协助
+	RDP2TCP_DVC_CHANNEL_NAME = "rdp2tcp"
+	DRDYNVC_SVC_CHANNEL_NAME = "drdynvc"
 )
 
 var t124_02_98_oid = []byte{0, 0, 20, 124, 0, 1}
@@ -281,18 +291,18 @@ func NewClientNetworkData() *ClientNetworkData {
 	n.ChannelDefArray = make([]ChannelDef, 0, n.ChannelCount)
 
 	var d1 ChannelDef
-	d1.Name = plugin.RDPDR_SVC_CHANNEL_NAME
+	d1.Name = RDPDR_SVC_CHANNEL_NAME
 	d1.Options = uint32(CHANNEL_OPTION_INITIALIZED | CHANNEL_OPTION_ENCRYPT_RDP |
 		CHANNEL_OPTION_COMPRESS_RDP)
 	n.ChannelDefArray = append(n.ChannelDefArray, d1)
 
 	var d2 ChannelDef
-	d2.Name = plugin.RDPSND_SVC_CHANNEL_NAME
+	d2.Name = RDPSND_SVC_CHANNEL_NAME
 	d2.Options = uint32(CHANNEL_OPTION_INITIALIZED | CHANNEL_OPTION_ENCRYPT_RDP |
 		CHANNEL_OPTION_COMPRESS_RDP | CHANNEL_OPTION_SHOW_PROTOCOL)
 	n.ChannelDefArray = append(n.ChannelDefArray, d2)
 	var d ChannelDef
-	d.Name = plugin.CLIPRDR_SVC_CHANNEL_NAME
+	d.Name = CLIPRDR_SVC_CHANNEL_NAME
 	d.Options = uint32(CHANNEL_OPTION_INITIALIZED | CHANNEL_OPTION_ENCRYPT_RDP |
 		CHANNEL_OPTION_COMPRESS_RDP | CHANNEL_OPTION_SHOW_PROTOCOL)
 	n.ChannelDefArray = append(n.ChannelDefArray, d)

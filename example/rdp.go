@@ -8,18 +8,14 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/tomatome/grdp/plugin/cliprdr"
-
-	"github.com/tomatome/grdp/plugin"
-
-	"github.com/tomatome/grdp/core"
-	"github.com/tomatome/grdp/glog"
-	"github.com/tomatome/grdp/protocol/nla"
-	"github.com/tomatome/grdp/protocol/pdu"
-	"github.com/tomatome/grdp/protocol/sec"
-	"github.com/tomatome/grdp/protocol/t125"
-	"github.com/tomatome/grdp/protocol/tpkt"
-	"github.com/tomatome/grdp/protocol/x224"
+	"github.com/forestsspring/grdp/core"
+	"github.com/forestsspring/grdp/glog"
+	"github.com/forestsspring/grdp/protocol/nla"
+	"github.com/forestsspring/grdp/protocol/pdu"
+	"github.com/forestsspring/grdp/protocol/sec"
+	"github.com/forestsspring/grdp/protocol/t125"
+	"github.com/forestsspring/grdp/protocol/tpkt"
+	"github.com/forestsspring/grdp/protocol/x224"
 )
 
 const (
@@ -30,16 +26,15 @@ const (
 )
 
 type RdpClient struct {
-	Host     string // ip:port
-	Width    int
-	Height   int
-	info     *Info
-	tpkt     *tpkt.TPKT
-	x224     *x224.X224
-	mcs      *t125.MCSClient
-	sec      *sec.Client
-	pdu      *pdu.Client
-	channels *plugin.Channels
+	Host   string // ip:port
+	Width  int
+	Height int
+	info   *Info
+	tpkt   *tpkt.TPKT
+	x224   *x224.X224
+	mcs    *t125.MCSClient
+	sec    *sec.Client
+	pdu    *pdu.Client
 }
 
 func NewRdpClient(host string, width, height int, logLevel glog.LEVEL) *RdpClient {
@@ -68,7 +63,6 @@ func uiRdp(info *Info) (error, *RdpClient) {
 		fmt.Println("Login:", err)
 		return err, nil
 	}
-	cc := cliprdr.NewCliprdrClient()
 	g.channels.Register(cc)
 
 	g.pdu.On("error", func(e error) {
@@ -119,7 +113,6 @@ func (g *RdpClient) Login() error {
 	g.mcs = t125.NewMCSClient(g.x224)
 	g.sec = sec.NewClient(g.mcs)
 	g.pdu = pdu.NewClient(g.sec)
-	g.channels = plugin.NewChannels(g.sec)
 
 	g.mcs.SetClientCoreData(uint16(g.Width), uint16(g.Height))
 
@@ -130,7 +123,6 @@ func (g *RdpClient) Login() error {
 	g.tpkt.SetFastPathListener(g.sec)
 	g.sec.SetFastPathListener(g.pdu)
 	g.sec.SetChannelSender(g.mcs)
-	g.channels.SetChannelSender(g.sec)
 	//g.pdu.SetFastPathSender(g.tpkt)
 
 	//g.x224.SetRequestedProtocol(x224.PROTOCOL_RDP)

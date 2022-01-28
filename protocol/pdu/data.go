@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/forestsspring/grdp/core"
+	"github.com/forestsspring/grdp/glog"
 	"github.com/lunixbochs/struc"
-	"github.com/tomatome/grdp/core"
-	"github.com/tomatome/grdp/glog"
 )
 
 const (
@@ -489,7 +489,6 @@ func (s *SaveSessionInfo) logonInfoV2(r io.Reader) (err error) {
 	b, _ = core.ReadBytes(int(cbUserName), r)
 	userName := core.UnicodeDecode(b)
 	glog.Infof("SessionId:[%d] UserName:[ %s] Domain:[ %s]", s.LogonId, userName, domain)
-
 	return err
 }
 func (s *SaveSessionInfo) logonPlainNotify(r io.Reader) (err error) {

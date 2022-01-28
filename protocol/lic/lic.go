@@ -3,7 +3,7 @@ package lic
 import (
 	"io"
 
-	"github.com/tomatome/grdp/core"
+	"github.com/forestsspring/grdp/core"
 )
 
 const (

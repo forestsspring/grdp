@@ -12,9 +12,9 @@ import (
 
 	"github.com/lunixbochs/struc"
 
-	"github.com/tomatome/grdp/core"
-	"github.com/tomatome/grdp/emission"
-	"github.com/tomatome/grdp/glog"
+	"github.com/forestsspring/grdp/core"
+	"github.com/forestsspring/grdp/emission"
+	"github.com/forestsspring/grdp/glog"
 )
 
 // ProtocolVersion
