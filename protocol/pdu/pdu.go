@@ -317,6 +317,13 @@ func (c *Client) recvPDU(s []byte) {
 		if p.ShareCtrlHeader.PDUType == PDUTYPE_DEACTIVATEALLPDU {
 			c.transport.Once("data", c.recvDemandActivePDU)
 		}
+		dataPdu, ok := p.Message.(*DataPDU)
+		if ok && p.ShareCtrlHeader.PDUType == PDUTYPE_DATAPDU && dataPdu.Header.PDUType2 == PDUTYPE2_SAVE_SESSION_INFO {
+			sessionInfo, ok1 := dataPdu.Data.(*SaveSessionInfo)
+			if ok1 && sessionInfo.InfoType != INFOTYPE_LOGON_EXTENDED_INFO {
+				c.Emit("logon")
+			}
+		}
 	}
 }
 

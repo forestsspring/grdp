@@ -83,7 +83,8 @@ func (g *Client) Login(domain, user, pwd string) error {
 	g.pdu.On("error", func(e error) {
 		err = e
 		glog.Error("error", e)
-		wg.Done()
+		//wg.Done()
+		g.Close()
 	}).On("close", func() {
 		err = errors.New("close")
 		glog.Info("on close")
@@ -94,8 +95,11 @@ func (g *Client) Login(domain, user, pwd string) error {
 		//wg.Done()
 	}).On("ready", func() {
 		glog.Info("on ready")
+	}).On("logon", func() {
+		glog.Info("logon haha")
+		//g.Close()
 	}).On("update", func(rectangles []pdu.BitmapData) {
-		glog.Info("on update bitmap,will close:", len(rectangles))
+		//glog.Info("on update bitmap,will close:", len(rectangles))
 	})
 
 	wg.Wait()
@@ -136,6 +140,12 @@ func (g *Client) LoginVNC() error {
 	glog.Info("on Wait")
 	wg.Wait()
 	return err
+}
+
+func (g *Client) Close() {
+	if g != nil && g.tpkt != nil {
+		g.tpkt.Close()
+	}
 }
 
 var (
